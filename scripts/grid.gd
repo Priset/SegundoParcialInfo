@@ -37,7 +37,11 @@ var final_touch = Vector2.ZERO
 var is_controlling = false
 
 # scoring variables and signals
-
+var current_score = 0
+var current_streak = 0
+var current_bonus = 30
+var is_valid_swap = false
+signal score_updated(new_score)
 
 # counter variables and signals
 
@@ -128,8 +132,33 @@ func swap_pieces(column, row, direction: Vector2):
 	#other_piece.position = grid_to_pixel(column, row)
 	first_piece.move(grid_to_pixel(column + direction.x, row + direction.y))
 	other_piece.move(grid_to_pixel(column, row))
+	# Verifica si el intercambio es válido antes de proceder
 	if not move_checked:
 		find_matches()
+
+func correct_move():
+	is_valid_swap = false
+	current_score += 30
+	emit_signal("score_updated", current_score)
+
+func incorrect_move():
+	# Esta función podría llamarse cuando el jugador realice un movimiento incorrecto
+	# Restablece la puntuación a cero y emite la señal
+	current_score = current_score
+	emit_signal("score_updated", current_score)
+
+func streak_move():
+	is_valid_swap = false
+	current_streak += 1
+	current_bonus = 30 * current_streak
+	current_score += current_bonus
+	emit_signal("score_updated", current_score)
+
+func streak_finish():
+	# Restablece la racha y la bonificación
+	current_streak = 1
+	current_bonus = 30
+	emit_signal("score_updated", current_score)
 
 func store_info(first_piece, other_piece, place, direction):
 	piece_one = first_piece
@@ -251,14 +280,13 @@ func refill_columns():
 	check_after_refill()
 
 func check_after_refill():
-	for i in width:
-		for j in height:
+	for i in range(width):
+		for j in range(height):
 			if all_pieces[i][j] != null and match_at(i, j, all_pieces[i][j].color):
 				find_matches()
 				get_parent().get_node("destroy_timer").start()
 				return
 	state = MOVE
-	
 	move_checked = false
 
 func _on_destroy_timer_timeout():
@@ -266,12 +294,17 @@ func _on_destroy_timer_timeout():
 	destroy_matched()
 
 func _on_collapse_timer_timeout():
+	is_valid_swap = true
+	if is_valid_swap:
+		correct_move() # Llama a la función para aumentar la puntuación 
+	else:
+		incorrect_move()
 	print("collapse")
 	collapse_columns()
 
 func _on_refill_timer_timeout():
 	refill_columns()
-	
+
 func game_over():
 	state = WAIT
 	print("game over")
