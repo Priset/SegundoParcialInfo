@@ -10,7 +10,7 @@ var current_count = 0
 func _on_score_updated(new_score):
 	# Esta función se llamará cada vez que se emita la señal "score_updated" desde el nodo "grid"
 	# Actualiza la etiqueta de puntuación en la interfaz de usuario
-	score_label.text = str(new_score)
+	score_label.text = "SC: " + str(new_score)
 
 func _on_time_updated(new_time):
 	# Esta función se llamará cada vez que se emita la señal "time_updated"
@@ -20,4 +20,4 @@ func _on_time_updated(new_time):
 func _on_steps_updated(remaining_moves):
 	# Esta función se llamará cada vez que se emita la señal "steps_updated"
 	# Actualiza la etiqueta del contador de movimientos en la interfaz de usuario
-	steps_label.text = str(remaining_moves)
+	steps_label.text = "MV: " + str(remaining_moves)
