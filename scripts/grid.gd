@@ -141,6 +141,10 @@ func swap_pieces(column, row, direction: Vector2):
 	# Verifica si el intercambio es válido antes de proceder
 	if not move_checked:
 		find_matches()
+	else: 
+		current_streak = 1
+		current_bonus = 30
+		is_valid_swap = false
  
 func correct_move():
 	current_score += current_bonus  # Suma el bono actual al puntaje
@@ -150,7 +154,6 @@ func correct_move():
 	emit_signal("score_updated", current_score)
 
 func incorrect_move():
-	current_score = current_score
 	current_streak = 1
 	current_bonus = 30
 	emit_signal("score_updated", current_score)
@@ -239,6 +242,7 @@ func destroy_matched():
 				all_pieces[i][j] = null
 				
 	move_checked = true
+	is_valid_swap = was_matched
 	if was_matched:
 		get_parent().get_node("collapse_timer").start()
 	else:
@@ -248,7 +252,6 @@ func collapse_columns():
 	for i in width:
 		for j in height:
 			if all_pieces[i][j] == null:
-				print(i, j)
 				# look above
 				for k in range(j + 1, height):
 					if all_pieces[i][k] != null:
@@ -293,15 +296,15 @@ func check_after_refill():
 	move_checked = false
 
 func _on_destroy_timer_timeout():
-	current_moves += 1  # Incrementa el contador de movimientos
-	emit_signal("steps_updated", max_moves - current_moves)  # Emite la señal de pasos actualizados
+	if current_moves < max_moves:
+		current_moves += 1  # Incrementa el contador de movimientos
+		emit_signal("steps_updated", max_moves - current_moves)  # Emite la señal de pasos actualizados
 	if current_moves >= max_moves:
 		game_over()  # Llama a la función de juego terminado si se alcanza el máximo de movimientos
 	print("destroy")
 	destroy_matched()
 
 func _on_collapse_timer_timeout():
-	is_valid_swap = true
 	if is_valid_swap:
 		correct_move()
 	else:
