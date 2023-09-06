@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=3 uid="uid://bvo0n67nd7pe3"]
+
+[ext_resource type="Texture2D" uid="uid://cdunkljd6up72" path="res://assets/bottom_ui.png" id="1_2vb6v"]
+[ext_resource type="Script" path="res://scripts/bottom_ui.gd" id="2_yxrqi"]
+[ext_resource type="FontFile" uid="uid://b25431rxog83j" path="res://assets/fonts/Kenney Blocks.ttf" id="3_4jart"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_wd0d1"]
+font = ExtResource("3_4jart")
+font_size = 25
+
+[node name="bottom_ui" type="TextureRect"]
+offset_left = -2.0
+offset_top = 935.0
+offset_right = 574.0
+offset_bottom = 1027.0
+texture = ExtResource("1_2vb6v")
+script = ExtResource("2_yxrqi")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -3.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="goal_label" type="Label" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 5
+text = "GOAL SCORE: 1500"
+label_settings = SubResource("LabelSettings_wd0d1")
+horizontal_alignment = 1
+vertical_alignment = 1
