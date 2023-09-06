@@ -12,6 +12,8 @@ var state
 @export var offset: int
 @export var y_offset: int
 @export var time_mode: bool = true
+@export var max_moves = 30  # Número máximo de movimientos
+@export var remaining_time = 40  # Establece el tiempo inicial en segundos
 
 # piece array
 var possible_pieces = [
@@ -44,15 +46,11 @@ var current_bonus = 30
 var is_valid_swap = false
 signal score_updated(new_score)
 
-# counter variables and signals
-var remaining_time = 40  # Establece el tiempo inicial en segundos
 signal time_updated(new_time)
 
-var max_moves = 30  # Número máximo de movimientos
-var current_moves = 0  # Contador de movimientos actual
+var current_moves = 0  
 signal steps_updated(new_steps)
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
 	state = MOVE
 	randomize()
@@ -292,15 +290,15 @@ func check_after_refill():
 				get_parent().get_node("destroy_timer").start()
 				return
 	state = MOVE
-	move_checked = false
-
-func _on_destroy_timer_timeout():
 	if not time_mode:
 		if current_moves < max_moves:
 			current_moves += 1  # Incrementa el contador de movimientos
 			emit_signal("steps_updated", max_moves - current_moves)  # Emite la señal de pasos actualizados
 		if current_moves >= max_moves:
-			game_over()  # Llama a la función de juego terminado si se alcanza el máximo de movimientos
+			game_over()  # Llama a la función de juego terminado si se alcanza el máximo de movimientos<
+	move_checked = false
+
+func _on_destroy_timer_timeout():
 	print("destroy")
 	destroy_matched()
 
@@ -319,11 +317,11 @@ func game_over():
 	state = WAIT
 	remaining_time = 0  # Detiene el contador de tiempo
 	max_moves = 0  # Deshabilita los movimientos disponibles
-	print("Game Over!")
-	
+	get_tree().change_scene_to_file("res://scenes/game_over.tscn")
+
 func game_win():
 	if current_score >= 1500:
 		state = WAIT  # Detiene el juego
-		print("¡Has ganado! Puntaje alcanzado")
+		get_tree().change_scene_to_file("res://scenes/game_win.tscn")
 
 
