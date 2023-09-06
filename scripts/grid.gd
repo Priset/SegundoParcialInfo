@@ -44,12 +44,14 @@ var is_valid_swap = false
 signal score_updated(new_score)
 
 # counter variables and signals
-var remaining_time = 80  # Establece el tiempo inicial en segundos
+var remaining_time = 40  # Establece el tiempo inicial en segundos
 signal time_updated(new_time)
 
 var max_moves = 30  # Número máximo de movimientos
 var current_moves = 0  # Contador de movimientos actual
 signal steps_updated(new_steps)
+
+var time_mode = true # Modo de juego por defecto: tiempo
 
 
 # Called when the node enters the scene tree for the first time.
@@ -152,6 +154,7 @@ func correct_move():
 	# Incrementa el bono para el próximo movimiento válido
 	current_bonus = 30 * current_streak
 	emit_signal("score_updated", current_score)
+	
 
 func incorrect_move():
 	current_streak = 1
@@ -195,6 +198,8 @@ func _process(delta):
 		else:
 			# Emitir la señal de tiempo actualizado
 			emit_signal("time_updated", remaining_time)
+		# Llama a game_win si se alcanza el puntaje de 5000
+		game_win()
 
 func find_matches():
 	for i in width:
@@ -240,7 +245,6 @@ func destroy_matched():
 				was_matched = true
 				all_pieces[i][j].queue_free()
 				all_pieces[i][j] = null
-				
 	move_checked = true
 	is_valid_swap = was_matched
 	if was_matched:
@@ -317,4 +321,13 @@ func _on_refill_timer_timeout():
 
 func game_over():
 	state = WAIT
-	print("game over")
+	remaining_time = 0  # Detiene el contador de tiempo
+	max_moves = 0  # Deshabilita los movimientos disponibles
+	print("Game Over!")
+	
+func game_win():
+	if current_score >= 1500:
+		state = WAIT  # Detiene el juego
+		print("¡Has ganado! Puntaje alcanzado")
+
+
