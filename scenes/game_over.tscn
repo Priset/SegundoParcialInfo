@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://cfta3ygugq4l3"]
+[gd_scene load_steps=5 format=3 uid="uid://cfta3ygugq4l3"]
 
 [ext_resource type="Texture2D" uid="uid://brp4euwugc18f" path="res://assets/background.png" id="1_vp8oj"]
 [ext_resource type="FontFile" uid="uid://b25431rxog83j" path="res://assets/fonts/Kenney Blocks.ttf" id="2_kwp8g"]
+[ext_resource type="Texture2D" uid="uid://cpuav7ug4h5vt" path="res://assets/reset_ui.png" id="3_lx5nv"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_714kv"]
 font = ExtResource("2_kwp8g")
@@ -34,3 +35,33 @@ layout_mode = 2
 layout_mode = 2
 text = "GAME OVER"
 label_settings = SubResource("LabelSettings_714kv")
+
+[node name="MarginContainer2" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.359
+anchor_top = 0.605
+anchor_right = 0.634
+anchor_bottom = 0.678
+offset_left = 0.215988
+offset_top = 0.269958
+offset_right = -0.18399
+offset_bottom = 0.371948
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer2"]
+layout_mode = 2
+texture = ExtResource("3_lx5nv")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Button" type="Button" parent="MarginContainer2/TextureRect"]
+layout_mode = 2
+anchor_left = 0.036
+anchor_top = 0.064
+anchor_right = 0.961
+anchor_bottom = 0.874
+offset_left = -0.116
+offset_top = 0.384
+offset_right = -0.0410156
+offset_bottom = -0.00600433
+flat = true
