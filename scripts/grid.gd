@@ -11,6 +11,7 @@ var state
 @export var y_start: int
 @export var offset: int
 @export var y_offset: int
+@export var time_mode: bool = true
 
 # piece array
 var possible_pieces = [
@@ -50,9 +51,6 @@ signal time_updated(new_time)
 var max_moves = 30  # Número máximo de movimientos
 var current_moves = 0  # Contador de movimientos actual
 signal steps_updated(new_steps)
-
-var time_mode = true # Modo de juego por defecto: tiempo
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -190,15 +188,12 @@ func touch_difference(grid_1, grid_2):
 func _process(delta):
 	if state == MOVE:
 		touch_input()
-		# Actualiza el contador de tiempo
-		remaining_time -= delta
-		if remaining_time <= 0:
-			# Aquí puedes manejar la lógica cuando el tiempo se agote (por ejemplo, game over)
-			game_over()
-		else:
-			# Emitir la señal de tiempo actualizado
-			emit_signal("time_updated", remaining_time)
-		# Llama a game_win si se alcanza el puntaje de 5000
+		if time_mode:
+			remaining_time -= delta
+			if remaining_time <= 0:
+				game_over()
+			else:
+				emit_signal("time_updated", remaining_time)
 		game_win()
 
 func find_matches():
@@ -300,11 +295,12 @@ func check_after_refill():
 	move_checked = false
 
 func _on_destroy_timer_timeout():
-	if current_moves < max_moves:
-		current_moves += 1  # Incrementa el contador de movimientos
-		emit_signal("steps_updated", max_moves - current_moves)  # Emite la señal de pasos actualizados
-	if current_moves >= max_moves:
-		game_over()  # Llama a la función de juego terminado si se alcanza el máximo de movimientos
+	if not time_mode:
+		if current_moves < max_moves:
+			current_moves += 1  # Incrementa el contador de movimientos
+			emit_signal("steps_updated", max_moves - current_moves)  # Emite la señal de pasos actualizados
+		if current_moves >= max_moves:
+			game_over()  # Llama a la función de juego terminado si se alcanza el máximo de movimientos
 	print("destroy")
 	destroy_matched()
 

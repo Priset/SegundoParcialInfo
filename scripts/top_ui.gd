@@ -20,4 +20,4 @@ func _on_time_updated(new_time):
 func _on_steps_updated(remaining_moves):
 	# Esta función se llamará cada vez que se emita la señal "steps_updated"
 	# Actualiza la etiqueta del contador de movimientos en la interfaz de usuario
-	steps_label.text = "MV: " + str(remaining_moves)
+	counter_label.text = str(remaining_moves)

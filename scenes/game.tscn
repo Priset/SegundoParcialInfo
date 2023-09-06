@@ -24,6 +24,7 @@ x_start = 64
 y_start = 800
 offset = 64
 y_offset = 2
+time_mode = false
 
 [node name="destroy_timer" type="Timer" parent="."]
 wait_time = 0.5
