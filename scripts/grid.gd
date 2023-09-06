@@ -38,12 +38,18 @@ var is_controlling = false
 
 # scoring variables and signals
 var current_score = 0
-var current_streak = 0
+var current_streak = 1
 var current_bonus = 30
 var is_valid_swap = false
 signal score_updated(new_score)
 
 # counter variables and signals
+var remaining_time = 80  # Establece el tiempo inicial en segundos
+signal time_updated(new_time)
+
+var max_moves = 30  # Número máximo de movimientos
+var current_moves = 0  # Contador de movimientos actual
+signal steps_updated(new_steps)
 
 
 # Called when the node enters the scene tree for the first time.
@@ -135,27 +141,16 @@ func swap_pieces(column, row, direction: Vector2):
 	# Verifica si el intercambio es válido antes de proceder
 	if not move_checked:
 		find_matches()
-
+ 
 func correct_move():
-	is_valid_swap = false
-	current_score += 30
+	current_score += current_bonus  # Suma el bono actual al puntaje
+	current_streak += 1  # Incrementa la racha
+	# Incrementa el bono para el próximo movimiento válido
+	current_bonus = 30 * current_streak
 	emit_signal("score_updated", current_score)
 
 func incorrect_move():
-	# Esta función podría llamarse cuando el jugador realice un movimiento incorrecto
-	# Restablece la puntuación a cero y emite la señal
 	current_score = current_score
-	emit_signal("score_updated", current_score)
-
-func streak_move():
-	is_valid_swap = false
-	current_streak += 1
-	current_bonus = 30 * current_streak
-	current_score += current_bonus
-	emit_signal("score_updated", current_score)
-
-func streak_finish():
-	# Restablece la racha y la bonificación
 	current_streak = 1
 	current_bonus = 30
 	emit_signal("score_updated", current_score)
@@ -189,6 +184,14 @@ func touch_difference(grid_1, grid_2):
 func _process(delta):
 	if state == MOVE:
 		touch_input()
+		# Actualiza el contador de tiempo
+		remaining_time -= delta
+		if remaining_time <= 0:
+			# Aquí puedes manejar la lógica cuando el tiempo se agote (por ejemplo, game over)
+			game_over()
+		else:
+			# Emitir la señal de tiempo actualizado
+			emit_signal("time_updated", remaining_time)
 
 func find_matches():
 	for i in width:
@@ -290,13 +293,17 @@ func check_after_refill():
 	move_checked = false
 
 func _on_destroy_timer_timeout():
+	current_moves += 1  # Incrementa el contador de movimientos
+	emit_signal("steps_updated", max_moves - current_moves)  # Emite la señal de pasos actualizados
+	if current_moves >= max_moves:
+		game_over()  # Llama a la función de juego terminado si se alcanza el máximo de movimientos
 	print("destroy")
 	destroy_matched()
 
 func _on_collapse_timer_timeout():
 	is_valid_swap = true
 	if is_valid_swap:
-		correct_move() # Llama a la función para aumentar la puntuación 
+		correct_move()
 	else:
 		incorrect_move()
 	print("collapse")
